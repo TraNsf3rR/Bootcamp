@@ -3,6 +3,7 @@ package org.example.menu;
 import org.example.model.Animal;
 import org.example.shelter.Shelter;
 
+import java.awt.*;
 import java.util.Scanner;
 
 public class ConsoleMenu {
@@ -24,9 +25,7 @@ public class ConsoleMenu {
                     running = false;
                     System.out.println("Goodbye!");
                 }
-                case "1" -> {
-                    System.out.println("Add animal not implemented yet");
-                }
+                case "1" -> addAnimal();
                 case "2" -> {
                     System.out.println("List all animals not implemented yet");
                 }
@@ -54,4 +53,45 @@ public class ConsoleMenu {
                 0. Exit
                 """);
     }
+
+    private void addAnimal() {
+        System.out.print("Species (Dog, Cat, Bird): ");
+        String species = scanner.nextLine().trim();
+//          Take animal species
+        if (!species.equalsIgnoreCase("Dog")
+                && !species.equalsIgnoreCase("Cat")
+                && !species.equalsIgnoreCase("Bird")) {
+            System.out.println("Invalid species. Choose Dog, Cat, Bird.");
+            return;
+        }
+//          Take animal name
+        System.out.print("Animal name: ");
+        String name = scanner.nextLine().trim();
+        if (name.isBlank()) {
+            System.out.println("Animal name cannot be empty.");
+            return;
+        }
+//          Take input and check if not empty
+        System.out.print("Animal age: ");
+        String ageInput = scanner.nextLine().trim();
+        if (ageInput.isBlank()) {
+            System.out.println("Animal age cannot be empty.");
+            return;
+        }
+//        Check for decimal numbers
+        int age;
+        try {
+            age = Integer.parseInt(ageInput);
+        } catch (NumberFormatException exception) {
+            System.out.println("Animal age must be a whole number.");
+            return;
+        }
+//        Check for negative numbers
+        if (age < 0) {
+            System.out.println("Animal age cannot be negative.");
+            return;
+        }
+    }
+
+
 }
