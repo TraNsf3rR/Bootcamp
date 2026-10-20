@@ -16,7 +16,13 @@ public class Order {
     }
 
     public void addItem(OrderItem item){
-        // TODO: prevent adding items if order is already paid
+//          prevented adding items if order is already paid
+        if (isPaid()) {
+            throw new IllegalStateException("Cannot add items to a paid order.");
+        }
+        if (item == null) {
+            throw new IllegalArgumentException("Order item cannot be null.");
+        }
         items.add(item);
     }
 
@@ -33,7 +39,10 @@ public class Order {
     }
 
     public void markAsPaid(){
-        // TODO: validate order is not empty
+//          Validation of empty order
+        if (items.isEmpty()) {
+            throw new IllegalStateException("Cannot mark an empty order as paid.");
+        }
         this.status = OrderStatus.PAID;
     }
 
@@ -69,7 +78,10 @@ public class Order {
             return this;
         }
         public Order build(){
-            // TODO: validate customerName
+//              Check for valid customer name and initialize order.
+            if (customerName == null || customerName.isBlank()) {
+                throw new IllegalArgumentException("Customer name must not be blank.");
+            }
             return new Order(this);
         }
     }
