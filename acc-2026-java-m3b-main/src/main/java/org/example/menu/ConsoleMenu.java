@@ -48,7 +48,10 @@ public class ConsoleMenu {
     }
 
     private void addItem(){
-        // TODO: check if order exists
+        if (currentOrder == null) {
+            System.out.println("Please create an order first.");
+            return;
+        }
 
         System.out.println("Item name:");
         String itemName = scanner.nextLine();
@@ -64,7 +67,10 @@ public class ConsoleMenu {
     }
 
     private void viewOrder(){
-        // TODO: check if order exists
+        if (currentOrder == null) {
+            System.out.println("Please create an order first.");
+            return;
+        }
 
         System.out.println("Customer: " + currentOrder.getCustomerName());
         System.out.println("Status: " +  currentOrder.getStatus());
@@ -78,7 +84,10 @@ public class ConsoleMenu {
     }
 
     private void payOrder(){
-        // TODO: check if order exists
+        if (currentOrder == null) {
+            System.out.println("Please create an order first.");
+            return;
+        }
 
         System.out.println("""
                 Select payment method:
