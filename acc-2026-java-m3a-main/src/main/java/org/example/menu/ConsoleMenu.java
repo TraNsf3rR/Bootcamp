@@ -6,6 +6,13 @@ import org.example.shelter.Shelter;
 import java.awt.*;
 import java.util.Scanner;
 
+import org.example.model.AnimalId;
+import org.example.model.Bird;
+import org.example.model.Cat;
+import org.example.model.Dog;
+
+import java.util.Locale;
+
 public class ConsoleMenu {
     private final Shelter<Animal> shelter;
     private final Scanner scanner =  new Scanner(System.in);
@@ -14,8 +21,6 @@ public class ConsoleMenu {
     }
 
     public void start(){
-        // TODO:
-        // Call correct 'Shelter' methods based on selected option
         boolean running = true;
         while (running) {
             printMenu();
@@ -27,16 +32,44 @@ public class ConsoleMenu {
                 }
                 case "1" -> addAnimal();
                 case "2" -> {
-                    System.out.println("List all animals not implemented yet");
+                    var animals = shelter.getAllAnimals();
+
+                    if (animals.isEmpty()) {
+                        System.out.println("No animals in the shelter.");
+                    } else {
+                        animals.forEach(System.out::println);
+                    }
                 }
                 case "3" -> {
-                    System.out.println("Find animals by species not implemented yet");
+                    System.out.print("Enter species (Dog, Cat, Bird): ");
+                    String species = scanner.nextLine().trim();
+                    var animals = shelter.findBySpecies(species);
+
+                    if (animals.isEmpty()) {
+                        System.out.println("No animals found for species: " + species);
+                    } else {
+                        animals.forEach(System.out::println);
+                    }
                 }
                 case "4" -> {
-                    System.out.println("List available animals not implemented yet");
+                    var avaliableAnimals = shelter.findAvailableAnimals();
+
+                    if (avaliableAnimals.isEmpty()) {
+                        System.out.println("No available animals.");
+                    } else {
+                        avaliableAnimals.forEach(System.out::println);
+                    }
                 }
                 case "5" -> {
-                    System.out.println("Mark animal as adopted not implemented yet");
+                    System.out.print("Enter animal ID: ");
+                    String id = scanner.nextLine().trim();
+
+                    try {
+                        shelter.markAsAdopted(id);
+                        System.out.println("Animal marked as adopted.");
+                    } catch (IllegalArgumentException exception) {
+                        System.out.println(exception.getMessage());
+                    }
                 }
                 default -> System.out.println("Invalid option. Try again");
             }
@@ -91,7 +124,20 @@ public class ConsoleMenu {
             System.out.println("Animal age cannot be negative.");
             return;
         }
+//          Full logic for adding an animal
+        Animal animal;
+        switch (species.toLowerCase(Locale.ROOT))
+        {
+            case "dog" -> animal = new Dog(new AnimalId(), name, age);
+            case "cat" -> animal = new Cat(new AnimalId(), name, age);
+            case "bird" -> animal = new Bird(new AnimalId(), name, age);
+            default -> {
+                System.out.println("Unexpected species: " + species);
+                return;
+            }
+        }
+
+        shelter.addAnimal(animal);
+        System.out.println("Animal added: " + animal);
     }
-
-
 }

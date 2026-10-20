@@ -38,6 +38,6 @@ public class Shelter <T extends Animal>{
                 return;
             }
         }
-        System.out.println("No animal found with ID: " + id);
+        throw new IllegalArgumentException("No animal found with ID: " + id);
     }
 }
