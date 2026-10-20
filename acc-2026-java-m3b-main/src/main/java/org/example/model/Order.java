@@ -21,8 +21,15 @@ public class Order {
     }
 
     public double calculateTotal(){
-        // TODO: calculate total from all order items (including discounts)
-        return 0;
+//          Initialize total
+        double subtotal = 0;
+
+//          Add up price of order
+        for (OrderItem item : items) {
+            subtotal += item.calculateTotal();
+        }
+//          Return total deducing discount
+        return discount.apply(subtotal);
     }
 
     public void markAsPaid(){
