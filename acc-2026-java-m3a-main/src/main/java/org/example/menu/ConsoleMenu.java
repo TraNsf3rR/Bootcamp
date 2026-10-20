@@ -14,9 +14,34 @@ public class ConsoleMenu {
 
     public void start(){
         // TODO:
-        // Show menu in a loop
-        // Read user input
         // Call correct 'Shelter' methods based on selected option
+        boolean running = true;
+        while (running) {
+            printMenu();
+            String choice = scanner.nextLine().trim();
+            switch (choice) {
+                case "0" -> {
+                    running = false;
+                    System.out.println("Goodbye!");
+                }
+                case "1" -> {
+                    System.out.println("Add animal not implemented yet");
+                }
+                case "2" -> {
+                    System.out.println("List all animals not implemented yet");
+                }
+                case "3" -> {
+                    System.out.println("Find animals by species not implemented yet");
+                }
+                case "4" -> {
+                    System.out.println("List available animals not implemented yet");
+                }
+                case "5" -> {
+                    System.out.println("Mark animal as adopted not implemented yet");
+                }
+                default -> System.out.println("Invalid option. Try again");
+            }
+        }
     }
 
     private void printMenu(){
