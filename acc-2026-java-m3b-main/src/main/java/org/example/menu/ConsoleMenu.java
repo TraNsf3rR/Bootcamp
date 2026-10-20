@@ -116,8 +116,14 @@ public class ConsoleMenu {
     }
 
     private PaymentMethod createGiftCardPayment(){
-        // TODO
-        return null;
+//          collects values and passes them to factory
+        System.out.println("Gift Card code: ");
+        String code = scanner.nextLine();
+
+        System.out.println("Gift Card balance: ");
+        double balance = Double.parseDouble(scanner.nextLine());
+
+        return PaymentMethodFactory.createGiftCardPayment(code, balance);
     }
 
     private void printMenu(){

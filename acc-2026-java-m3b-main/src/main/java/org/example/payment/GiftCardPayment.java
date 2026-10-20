@@ -14,7 +14,14 @@ public class GiftCardPayment extends PaymentMethod{
 
     @Override
     public PaymentResult processPayment(double amount){
-        // TODO: check if balance is enough
+        if (code == null || code.isBlank()) {
+            return new PaymentResult(false, "Gift card code is required.");
+        }
+        if (balance < amount) {
+            return new PaymentResult(false, "Insufficient gift card balance.");
+        }
+//        If checks pass - make payment
+        balance -= amount;
         return new PaymentResult(true, "Paid " + amount + " using gift card");
     }
 }
