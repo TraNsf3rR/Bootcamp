@@ -1,11 +1,10 @@
 package org.example.model;
 
-import java.util.UUID;
-
 public final class AnimalId {
+    private static int nextId = 1;
     private final String value;
     public AnimalId(){
-        this.value = UUID.randomUUID().toString();
+        this.value = String.valueOf(nextId++);
     }
 
     public AnimalId(String value){

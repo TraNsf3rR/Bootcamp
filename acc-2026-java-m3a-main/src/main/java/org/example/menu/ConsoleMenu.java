@@ -52,12 +52,12 @@ public class ConsoleMenu {
                     }
                 }
                 case "4" -> {
-                    var avaliableAnimals = shelter.findAvailableAnimals();
+                    var availableAnimals = shelter.findAvailableAnimals();
 
-                    if (avaliableAnimals.isEmpty()) {
+                    if (availableAnimals.isEmpty()) {
                         System.out.println("No available animals.");
                     } else {
-                        avaliableAnimals.forEach(System.out::println);
+                        availableAnimals.forEach(System.out::println);
                     }
                 }
                 case "5" -> {
@@ -77,6 +77,7 @@ public class ConsoleMenu {
     }
 
     private void printMenu(){
+        System.out.println(" ");
         System.out.println("""
                 1. Add animal
                 2. List all animals
