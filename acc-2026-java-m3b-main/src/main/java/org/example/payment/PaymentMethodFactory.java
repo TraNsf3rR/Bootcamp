@@ -6,4 +6,7 @@ public class PaymentMethodFactory {
     }
 
     // TODO: create factories for PayPal and gift card
+    public static PaymentMethod createPaypalPayment(String email) {
+        return new PaypalPayment(email);
+    }
 }

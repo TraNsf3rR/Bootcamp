@@ -110,8 +110,9 @@ public class ConsoleMenu {
     }
 
     private  PaymentMethod createPaypalPayment(){
-        // TODO
-        return null;
+        System.out.println("PayPal email: ");
+        String email = scanner.nextLine();
+        return PaymentMethodFactory.createPaypalPayment(email);
     }
 
     private PaymentMethod createGiftCardPayment(){
