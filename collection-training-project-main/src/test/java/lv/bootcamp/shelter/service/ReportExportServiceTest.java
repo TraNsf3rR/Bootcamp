@@ -1,0 +1,67 @@
+package lv.bootcamp.shelter.service;
+
+import lv.bootcamp.shelter.model.Animal;
+import lv.bootcamp.shelter.service.data.ImportResult;
+import lv.bootcamp.shelter.service.data.ShelterReportData;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.time.LocalDate;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+class ReportExportServiceTest {
+
+    @TempDir
+    private Path tempDirectory;
+
+    @Test
+    void writesUtf8ReportAndCreatesParentDirectories() throws IOException {
+        LocalDate intakeDate = LocalDate.of(2026, 1, 15);
+        ImportResult importResult = new ImportResult(List.of(
+                new Animal("Buddy", "Dog", 3, true, intakeDate),
+                new Animal("Mārtiņš", "Cat", null, true, intakeDate),
+                new Animal("Max", "Dog", 5, false, intakeDate)
+        ), 2);
+        ShelterReportData reportData = new ShelterAnalyticsService().buildReportData(importResult);
+        Path outputPath = tempDirectory.resolve("reports").resolve("upload-report.txt");
+
+        new ReportExportService().writeReport(outputPath, reportData);
+
+        List<String> expectedLines = List.of(
+                "Generated: " + LocalDate.now(),
+                "Total imported: 3",
+                "Total skipped: 2",
+                "",
+                "Unique species: Cat, Dog",
+                "",
+                "Per-species totals:",
+                "Cat: total=1, vaccinated=1, unvaccinated=0, oldest=N/A",
+                "Dog: total=2, vaccinated=1, unvaccinated=1, oldest=Max (age 5)",
+                "",
+                "Needs vet input: Mārtiņš(Cat), Max(Dog)"
+        );
+        String expectedReport = String.join(System.lineSeparator(), expectedLines) + System.lineSeparator();
+
+        assertEquals(expectedReport, Files.readString(outputPath, StandardCharsets.UTF_8));
+    }
+
+    @Test
+    void writesNoneForEmptySpeciesAndVetInputLists() throws IOException {
+        ImportResult importResult = new ImportResult(List.of(), 0);
+        ShelterReportData reportData = new ShelterAnalyticsService().buildReportData(importResult);
+        Path outputPath = tempDirectory.resolve("empty-report.txt");
+
+        new ReportExportService().writeReport(outputPath, reportData);
+
+        List<String> lines = Files.readAllLines(outputPath, StandardCharsets.UTF_8);
+        assertTrue(lines.contains("Unique species: None"));
+        assertTrue(lines.contains("Needs vet input: None"));
+    }
+}
