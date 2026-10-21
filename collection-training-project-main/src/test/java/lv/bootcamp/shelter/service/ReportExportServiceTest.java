@@ -14,8 +14,10 @@ import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.OptionalInt;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ReportExportServiceTest {
@@ -59,6 +61,12 @@ class ReportExportServiceTest {
         String expectedReport = String.join(System.lineSeparator(), expectedLines) + System.lineSeparator();
 
         assertEquals(expectedReport, Files.readString(outputPath, StandardCharsets.UTF_8));
+
+        List<Path> archiveFiles = findArchiveFiles(outputPath);
+        assertEquals(1, archiveFiles.size());
+        assertTrue(archiveFiles.get(0).getFileName().toString()
+                .matches("upload-report-\\d{8}-\\d{6}-\\d{3}(?:-\\d+)?\\.txt"));
+        assertEquals(expectedReport, Files.readString(archiveFiles.get(0), StandardCharsets.UTF_8));
     }
 
     @Test
@@ -75,5 +83,31 @@ class ReportExportServiceTest {
         assertTrue(invalidRowsHeader >= 0);
         assertEquals("None", lines.get(invalidRowsHeader + 1));
         assertTrue(lines.contains("Needs vet input: None"));
+    }
+
+    @Test
+    void createsDistinctTimestampedArchiveForEachReportRun() throws IOException {
+        ImportResult importResult = new ImportResult(List.of(), List.of());
+        ShelterReportData reportData = new ShelterAnalyticsService().buildReportData(importResult);
+        Path outputPath = tempDirectory.resolve("upload-report.txt");
+        ReportExportService exportService = new ReportExportService();
+
+        exportService.writeReport(outputPath, reportData);
+        exportService.writeReport(outputPath, reportData);
+
+        List<Path> archiveFiles = findArchiveFiles(outputPath);
+        assertEquals(2, archiveFiles.size());
+        assertNotEquals(
+                archiveFiles.get(0).getFileName().toString(),
+                archiveFiles.get(1).getFileName().toString());
+    }
+
+    private List<Path> findArchiveFiles(Path outputPath) throws IOException {
+        try (Stream<Path> files = Files.list(outputPath.getParent())) {
+            return files
+                    .filter(path -> path.getFileName().toString().startsWith("upload-report-"))
+                    .sorted()
+                    .toList();
+        }
     }
 }
