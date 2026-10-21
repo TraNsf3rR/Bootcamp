@@ -38,7 +38,7 @@ public class ReportExportService {
             for (Map.Entry<String, SpeciesSummary> entry : reportData.speciesSummaries().entrySet()) {
                 SpeciesSummary summary = entry.getValue();
                 String oldestAnimal = summary.oldestAnimal()
-                        .map(animal -> animal.getName() + " (age " + animal.getAge() + ")")
+                        .map(animal -> animal.getName() + " (age " + animal.getAge().getAsInt() + ")")
                         .orElse("N/A");
 
                 writeLine(writer, entry.getKey() + ": total=" + summary.totalCount()

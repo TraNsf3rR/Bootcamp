@@ -12,6 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.OptionalInt;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -25,9 +26,9 @@ class ReportExportServiceTest {
     void writesUtf8ReportAndCreatesParentDirectories() throws IOException {
         LocalDate intakeDate = LocalDate.of(2026, 1, 15);
         ImportResult importResult = new ImportResult(List.of(
-                new Animal("Buddy", "Dog", 3, true, intakeDate),
-                new Animal("Mārtiņš", "Cat", null, true, intakeDate),
-                new Animal("Max", "Dog", 5, false, intakeDate)
+                new Animal("Buddy", "Dog", OptionalInt.of(3), true, intakeDate),
+                new Animal("Mārtiņš", "Cat", OptionalInt.empty(), true, intakeDate),
+                new Animal("Max", "Dog", OptionalInt.of(5), false, intakeDate)
         ), 2);
         ShelterReportData reportData = new ShelterAnalyticsService().buildReportData(importResult);
         Path outputPath = tempDirectory.resolve("reports").resolve("upload-report.txt");

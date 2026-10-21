@@ -32,7 +32,7 @@ public class ShelterAnalyticsService {
 
             // Unvaccinated animals may need vaccine follow-up; unknown ages need assessment.
             // The OR includes either concern and adds an animal only once if both apply.
-            if (!animal.isVaccinated() || animal.getAge() == null) {
+            if (!animal.isVaccinated() || animal.getAge().isEmpty()) {
                 animalsNeedingVetInput.add(animal.getName() + "(" + animal.getSpecies() + ")");
             }
         }
@@ -46,8 +46,8 @@ public class ShelterAnalyticsService {
                     .filter(animal -> !animal.isVaccinated())
                     .count();
             Optional<Animal> oldestAnimal = speciesAnimals.stream()
-                    .filter(animal -> animal.getAge() != null)
-                    .max(Comparator.comparingInt(Animal::getAge));
+                    .filter(animal -> animal.getAge().isPresent())
+                    .max(Comparator.comparingInt(animal -> animal.getAge().getAsInt()));
 
             speciesSummaries.put(species, new SpeciesSummary(
                     speciesAnimals.size(), vaccinatedCount, unvaccinatedCount, oldestAnimal));

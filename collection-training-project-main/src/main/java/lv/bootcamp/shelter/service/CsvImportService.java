@@ -16,6 +16,7 @@ import java.time.format.ResolverStyle;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.OptionalInt;
 
 @Slf4j
 public class CsvImportService {
@@ -64,7 +65,7 @@ public class CsvImportService {
 
         String name = requireValue(columns[0], "name");
         String species = requireValue(columns[1], "species");
-        Integer age = parseAge(columns[2]);
+        OptionalInt age = parseAge(columns[2]);
         boolean vaccinated = parseVaccinated(columns[3]);
         LocalDate intakeDate = LocalDate.parse(columns[4].trim(), DATE_FORMATTER);
 
@@ -79,9 +80,11 @@ public class CsvImportService {
         return trimmedValue;
     }
 
-    private Integer parseAge(String value) {
+    private OptionalInt parseAge(String value) {
         String trimmedValue = value.trim();
-        return trimmedValue.isEmpty() ? null : Integer.valueOf(trimmedValue);
+        return trimmedValue.isEmpty()
+                ? OptionalInt.empty()
+                : OptionalInt.of(Integer.parseInt(trimmedValue));
     }
 
     private boolean parseVaccinated(String value) {

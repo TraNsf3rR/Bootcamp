@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.OptionalInt;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
@@ -20,11 +21,11 @@ class ShelterAnalyticsServiceTest {
     void buildsSpeciesCollectionsAndVetInputList() {
         LocalDate intakeDate = LocalDate.of(2026, 1, 15);
         List<Animal> animals = List.of(
-                new Animal("Buddy", "Dog", 3, true, intakeDate),
-                new Animal("Milo", "Cat", null, true, intakeDate),
-                new Animal("Max", "Dog", 5, false, intakeDate),
-                new Animal("Pepper", "Bird", null, false, intakeDate),
-                new Animal("Rover", "Dog", null, true, intakeDate)
+                new Animal("Buddy", "Dog", OptionalInt.of(3), true, intakeDate),
+                new Animal("Milo", "Cat", OptionalInt.empty(), true, intakeDate),
+                new Animal("Max", "Dog", OptionalInt.of(5), false, intakeDate),
+                new Animal("Pepper", "Bird", OptionalInt.empty(), false, intakeDate),
+                new Animal("Rover", "Dog", OptionalInt.empty(), true, intakeDate)
         );
         ImportResult importResult = new ImportResult(animals, 0);
 
@@ -47,7 +48,7 @@ class ShelterAnalyticsServiceTest {
         assertEquals(2L, dogSummary.vaccinatedCount());
         assertEquals(1L, dogSummary.unvaccinatedCount());
         assertEquals("Max", dogSummary.oldestAnimal().orElseThrow().getName());
-        assertEquals(5, dogSummary.oldestAnimal().orElseThrow().getAge());
+        assertEquals(5, dogSummary.oldestAnimal().orElseThrow().getAge().getAsInt());
 
         SpeciesSummary catSummary = reportData.speciesSummaries().get("Cat");
         assertEquals(1L, catSummary.totalCount());

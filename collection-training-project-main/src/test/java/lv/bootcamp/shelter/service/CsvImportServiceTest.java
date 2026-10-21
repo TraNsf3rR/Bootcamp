@@ -12,10 +12,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.Objects;
+import java.util.OptionalInt;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -38,7 +38,7 @@ class CsvImportServiceTest {
 
         assertEquals(31, result.allAnimals().size());
         assertEquals(6, result.skippedRows());
-        assertEquals(3, result.allAnimals().stream().filter(animal -> animal.getAge() == null).count());
+        assertEquals(3, result.allAnimals().stream().filter(animal -> animal.getAge().isEmpty()).count());
     }
 
     @Test
@@ -64,13 +64,13 @@ class CsvImportServiceTest {
         Animal knownAgeAnimal = result.allAnimals().get(0);
         assertEquals("Mārtiņš", knownAgeAnimal.getName());
         assertEquals("Dog", knownAgeAnimal.getSpecies());
-        assertEquals(5, knownAgeAnimal.getAge());
+        assertEquals(5, knownAgeAnimal.getAge().getAsInt());
         assertTrue(knownAgeAnimal.isVaccinated());
         assertEquals(LocalDate.of(2026, 1, 15), knownAgeAnimal.getIntakeDate());
 
         Animal unknownAgeAnimal = result.allAnimals().get(1);
         assertEquals("Milo", unknownAgeAnimal.getName());
-        assertNull(unknownAgeAnimal.getAge());
+        assertEquals(OptionalInt.empty(), unknownAgeAnimal.getAge());
         assertFalse(unknownAgeAnimal.isVaccinated());
     }
 
