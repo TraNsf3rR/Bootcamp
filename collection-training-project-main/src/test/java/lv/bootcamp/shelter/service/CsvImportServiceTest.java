@@ -1,6 +1,7 @@
 package lv.bootcamp.shelter.service;
 
 import lv.bootcamp.shelter.model.Animal;
+import lv.bootcamp.shelter.service.data.InvalidRow;
 import lv.bootcamp.shelter.service.data.ImportResult;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -11,6 +12,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
 import java.util.OptionalInt;
 
@@ -38,6 +40,9 @@ class CsvImportServiceTest {
 
         assertEquals(31, result.allAnimals().size());
         assertEquals(6, result.skippedRows());
+        assertEquals(
+                List.of(8, 9, 10, 34, 35, 36),
+                result.invalidRows().stream().map(InvalidRow::lineNumber).toList());
         assertEquals(3, result.allAnimals().stream().filter(animal -> animal.getAge().isEmpty()).count());
     }
 
@@ -60,6 +65,11 @@ class CsvImportServiceTest {
 
         assertEquals(2, result.allAnimals().size());
         assertEquals(7, result.skippedRows());
+        assertEquals(
+                List.of(4, 5, 6, 7, 8, 9, 10),
+                result.invalidRows().stream().map(InvalidRow::lineNumber).toList());
+        assertEquals(inputPath, result.invalidRows().get(0).sourceFile());
+        assertEquals("name must not be blank", result.invalidRows().get(0).reason());
 
         Animal knownAgeAnimal = result.allAnimals().get(0);
         assertEquals("Mārtiņš", knownAgeAnimal.getName());

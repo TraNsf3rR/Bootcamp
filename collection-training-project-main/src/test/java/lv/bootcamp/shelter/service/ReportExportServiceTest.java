@@ -1,6 +1,7 @@
 package lv.bootcamp.shelter.service;
 
 import lv.bootcamp.shelter.model.Animal;
+import lv.bootcamp.shelter.service.data.InvalidRow;
 import lv.bootcamp.shelter.service.data.ImportResult;
 import lv.bootcamp.shelter.service.data.ShelterReportData;
 import org.junit.jupiter.api.Test;
@@ -29,7 +30,10 @@ class ReportExportServiceTest {
                 new Animal("Buddy", "Dog", OptionalInt.of(3), true, intakeDate),
                 new Animal("Mārtiņš", "Cat", OptionalInt.empty(), true, intakeDate),
                 new Animal("Max", "Dog", OptionalInt.of(5), false, intakeDate)
-        ), 2);
+        ), List.of(
+                new InvalidRow(Path.of("intake.csv"), 8, "name must not be blank"),
+                new InvalidRow(Path.of("intake.csv"), 9, "invalid age")
+        ));
         ShelterReportData reportData = new ShelterAnalyticsService().buildReportData(importResult);
         Path outputPath = tempDirectory.resolve("reports").resolve("upload-report.txt");
 
@@ -46,6 +50,10 @@ class ReportExportServiceTest {
                 "Cat: total=1, vaccinated=1, unvaccinated=0, oldest=N/A",
                 "Dog: total=2, vaccinated=1, unvaccinated=1, oldest=Max (age 5)",
                 "",
+                "Invalid rows:",
+                "intake.csv:8 - name must not be blank",
+                "intake.csv:9 - invalid age",
+                "",
                 "Needs vet input: Mārtiņš(Cat), Max(Dog)"
         );
         String expectedReport = String.join(System.lineSeparator(), expectedLines) + System.lineSeparator();
@@ -55,7 +63,7 @@ class ReportExportServiceTest {
 
     @Test
     void writesNoneForEmptySpeciesAndVetInputLists() throws IOException {
-        ImportResult importResult = new ImportResult(List.of(), 0);
+        ImportResult importResult = new ImportResult(List.of(), List.of());
         ShelterReportData reportData = new ShelterAnalyticsService().buildReportData(importResult);
         Path outputPath = tempDirectory.resolve("empty-report.txt");
 
@@ -63,6 +71,9 @@ class ReportExportServiceTest {
 
         List<String> lines = Files.readAllLines(outputPath, StandardCharsets.UTF_8);
         assertTrue(lines.contains("Unique species: None"));
+        int invalidRowsHeader = lines.indexOf("Invalid rows:");
+        assertTrue(invalidRowsHeader >= 0);
+        assertEquals("None", lines.get(invalidRowsHeader + 1));
         assertTrue(lines.contains("Needs vet input: None"));
     }
 }

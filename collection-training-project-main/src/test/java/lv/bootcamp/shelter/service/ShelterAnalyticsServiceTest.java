@@ -27,7 +27,7 @@ class ShelterAnalyticsServiceTest {
                 new Animal("Pepper", "Bird", OptionalInt.empty(), false, intakeDate),
                 new Animal("Rover", "Dog", OptionalInt.empty(), true, intakeDate)
         );
-        ImportResult importResult = new ImportResult(animals, 0);
+        ImportResult importResult = new ImportResult(animals, List.of());
 
         ShelterReportData reportData = new ShelterAnalyticsService().buildReportData(importResult);
 

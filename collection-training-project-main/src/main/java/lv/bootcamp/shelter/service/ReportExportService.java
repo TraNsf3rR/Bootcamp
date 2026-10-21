@@ -1,6 +1,7 @@
 package lv.bootcamp.shelter.service;
 
 import lombok.extern.slf4j.Slf4j;
+import lv.bootcamp.shelter.service.data.InvalidRow;
 import lv.bootcamp.shelter.service.data.SpeciesSummary;
 import lv.bootcamp.shelter.service.data.ShelterReportData;
 
@@ -45,6 +46,17 @@ public class ReportExportService {
                         + ", vaccinated=" + summary.vaccinatedCount()
                         + ", unvaccinated=" + summary.unvaccinatedCount()
                         + ", oldest=" + oldestAnimal);
+            }
+
+            writeLine(writer, "");
+            writeLine(writer, "Invalid rows:");
+            if (reportData.importResult().invalidRows().isEmpty()) {
+                writeLine(writer, "None");
+            } else {
+                for (InvalidRow invalidRow : reportData.importResult().invalidRows()) {
+                    writeLine(writer, invalidRow.sourceFile() + ":" + invalidRow.lineNumber()
+                            + " - " + invalidRow.reason());
+                }
             }
 
             writeLine(writer, "");

@@ -2,6 +2,7 @@ package lv.bootcamp.shelter.service;
 
 import lombok.extern.slf4j.Slf4j;
 import lv.bootcamp.shelter.model.Animal;
+import lv.bootcamp.shelter.service.data.InvalidRow;
 import lv.bootcamp.shelter.service.data.ImportResult;
 
 import java.io.BufferedReader;
@@ -30,7 +31,7 @@ public class CsvImportService {
         log.info("Starting import from {}", inputPath);
 
         List<Animal> allAnimals = new ArrayList<>();
-        int skippedRows = 0;
+        List<InvalidRow> invalidRows = new ArrayList<>();
         int lineNumber = 0;
 
         try (BufferedReader reader = Files.newBufferedReader(inputPath, StandardCharsets.UTF_8)) {
@@ -44,7 +45,7 @@ public class CsvImportService {
                 try {
                     allAnimals.add(parseAnimal(row));
                 } catch (IllegalArgumentException | DateTimeParseException exception) {
-                    skippedRows++;
+                    invalidRows.add(new InvalidRow(inputPath, lineNumber, exception.getMessage()));
                     log.warn("Skipping invalid CSV row {} in {}: {}",
                             lineNumber, inputPath, exception.getMessage());
                 }
@@ -52,8 +53,8 @@ public class CsvImportService {
         }
 
         log.info("Finished import from {}: {} animals imported, {} rows skipped",
-                inputPath, allAnimals.size(), skippedRows);
-        return new ImportResult(allAnimals, skippedRows);
+                inputPath, allAnimals.size(), invalidRows.size());
+        return new ImportResult(allAnimals, invalidRows);
     }
 
     private Animal parseAnimal(String row) {
