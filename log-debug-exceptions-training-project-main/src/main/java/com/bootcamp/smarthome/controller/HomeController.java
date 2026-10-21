@@ -1,6 +1,8 @@
 package com.bootcamp.smarthome.controller;
 
 import com.bootcamp.smarthome.device.Device;
+import com.bootcamp.smarthome.exception.DeviceNotFoundException;
+import com.bootcamp.smarthome.exception.DeviceOfflineException;
 import com.bootcamp.smarthome.exception.HomeAutomationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,15 +51,17 @@ public class HomeController {
     /**
      * Finds a registered device by its ID.
      *
-     * Returns {@code null} when no matching device is found.
+     * @param deviceId the ID of the device to find
+     * @return the matching device
+     * @throws DeviceNotFoundException if no matching device is registered
      */
-    public Device findDevice(String deviceId) {
+    public Device findDevice(String deviceId) throws DeviceNotFoundException {
         for (int i = 0; i < deviceCount; i++) {
             if (devices[i] != null && devices[i].getDeviceId().equals(deviceId)) {
                 return devices[i];
             }
         }
-        return null;
+        throw new DeviceNotFoundException("Device '" + deviceId + "' not found");
     }
 
     // -------------------------------------------------------------------------
@@ -83,18 +87,16 @@ public class HomeController {
             String command = CommandParser.extractCommand(fullCommand);
             Device device = findDevice(deviceId);
 
-            if (device == null) {
-                logger.warn("Device '{}' not found; command skipped.", deviceId);
-                return;
-            }
-
             if (!device.isOnline()) {
-                logger.warn("Device '{}' is offline; command skipped.", deviceId);
-                return;
+                throw new DeviceOfflineException("Device '" + deviceId + "' is offline");
             }
 
             device.executeCommand(command);
             logger.info("Command executed successfully for device '{}': {}", deviceId, fullCommand);
+        } catch (DeviceNotFoundException exception) {
+            logger.warn("{}; command skipped.", exception.getMessage());
+        } catch (DeviceOfflineException exception) {
+            logger.warn("{}; command skipped.", exception.getMessage());
         } catch (HomeAutomationException exception) {
             logger.error("Command '{}' failed for device '{}'", fullCommand, deviceId, exception);
             throw new HomeAutomationException(

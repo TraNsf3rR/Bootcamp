@@ -58,7 +58,6 @@ public class Main {
 
         System.out.println("\n=== Scenario 5: Unlock with correct PIN ===");
         // Direct call to validatePin() to demonstrate intended correct behaviour.
-        // Going through sendCommand() would currently strip the PIN due to a parser bug.
         Device foundLock = controller.findDevice("LOCK_01");
         SmartLock frontDoor = (SmartLock) foundLock;
         try {
