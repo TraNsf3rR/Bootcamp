@@ -2,6 +2,7 @@ package lv.bootcamp.shelter.service;
 
 import lombok.extern.slf4j.Slf4j;
 import lv.bootcamp.shelter.model.Animal;
+import lv.bootcamp.shelter.service.data.DirectoryImportResult;
 import lv.bootcamp.shelter.service.data.InvalidRow;
 import lv.bootcamp.shelter.service.data.ImportResult;
 
@@ -19,6 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.OptionalInt;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Stream;
 
 @Slf4j
@@ -34,6 +37,11 @@ public class CsvImportService {
     }
 
     public ImportResult importAnimalsFromDirectory(Path inputDirectory) throws IOException {
+        return importNewAnimalsFromDirectory(inputDirectory, Set.of()).importResult();
+    }
+
+    public DirectoryImportResult importNewAnimalsFromDirectory(
+            Path inputDirectory, Set<String> previouslyProcessedFiles) throws IOException {
         if (!Files.isDirectory(inputDirectory)) {
             throw new NotDirectoryException(inputDirectory.toString());
         }
@@ -49,15 +57,29 @@ public class CsvImportService {
 
         List<Animal> allAnimals = new ArrayList<>();
         List<InvalidRow> invalidRows = new ArrayList<>();
+        List<String> processedFileNames = new ArrayList<>();
+        Set<String> knownProcessedFiles = new TreeSet<>();
+        previouslyProcessedFiles.stream()
+                .map(CsvImportService::normalizePath)
+                .forEach(knownProcessedFiles::add);
+
         for (Path csvFile : csvFiles) {
+            String relativeFileName = getRelativeFileName(inputDirectory, csvFile);
+            if (knownProcessedFiles.contains(relativeFileName)) {
+                log.info("Skipping previously processed CSV file {}", csvFile);
+                continue;
+            }
+
             ImportResult fileResult = importFile(csvFile);
             allAnimals.addAll(fileResult.allAnimals());
             invalidRows.addAll(fileResult.invalidRows());
+            processedFileNames.add(relativeFileName);
         }
 
-        log.info("Finished import from {}: {} CSV files, {} animals imported, {} rows skipped",
-                inputDirectory, csvFiles.size(), allAnimals.size(), invalidRows.size());
-        return new ImportResult(allAnimals, invalidRows);
+        log.info("Finished import from {}: {} CSV files processed, {} animals imported, {} rows skipped",
+                inputDirectory, processedFileNames.size(), allAnimals.size(), invalidRows.size());
+        ImportResult importResult = new ImportResult(allAnimals, invalidRows);
+        return new DirectoryImportResult(importResult, processedFileNames);
     }
 
     private ImportResult importFile(Path inputPath) throws IOException {
@@ -92,6 +114,16 @@ public class CsvImportService {
 
     private static boolean isCsvFile(Path path) {
         return path.getFileName().toString().toLowerCase(Locale.ROOT).endsWith(".csv");
+    }
+
+    private String getRelativeFileName(Path inputDirectory, Path csvFile) {
+        Path relativePath = inputDirectory.toAbsolutePath().normalize()
+                .relativize(csvFile.toAbsolutePath().normalize());
+        return normalizePath(relativePath.toString());
+    }
+
+    private static String normalizePath(String path) {
+        return path.replace('\\', '/');
     }
 
     private Animal parseAnimal(String row) {

@@ -1,6 +1,7 @@
 package lv.bootcamp.shelter.service;
 
 import lv.bootcamp.shelter.model.Animal;
+import lv.bootcamp.shelter.service.data.DirectoryImportResult;
 import lv.bootcamp.shelter.service.data.InvalidRow;
 import lv.bootcamp.shelter.service.data.ImportResult;
 import org.junit.jupiter.api.Test;
@@ -16,6 +17,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.OptionalInt;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -131,6 +133,30 @@ class CsvImportServiceTest {
 
         assertThrows(NotDirectoryException.class,
                 () -> importService.importAnimalsFromDirectory(inputFile));
+    }
+
+    @Test
+    void skipsPreviouslyProcessedFilesAndReturnsRelativeNamesForNewFiles() throws IOException {
+        Path inputDirectory = tempDirectory.resolve("input");
+        Path nestedDirectory = inputDirectory.resolve("nested");
+        Files.createDirectories(nestedDirectory);
+
+        Path processedCsv = inputDirectory.resolve("01-intake.csv");
+        Files.writeString(processedCsv, String.join(System.lineSeparator(),
+                "name,species,age,vaccinated,intakeDate",
+                "Buddy,Dog,3,true,15.01.2026") + System.lineSeparator(), StandardCharsets.UTF_8);
+
+        Path newCsv = nestedDirectory.resolve("02-intake.csv");
+        Files.writeString(newCsv, String.join(System.lineSeparator(),
+                "name,species,age,vaccinated,intakeDate",
+                "Luna,Cat,2,true,16.01.2026") + System.lineSeparator(), StandardCharsets.UTF_8);
+
+        DirectoryImportResult result = importService.importNewAnimalsFromDirectory(
+                inputDirectory, Set.of("01-intake.csv"));
+
+        assertEquals(List.of("Luna"),
+                result.importResult().allAnimals().stream().map(Animal::getName).toList());
+        assertEquals(List.of("nested/02-intake.csv"), result.processedFileNames());
     }
 
     private Path writeCsv(String... rows) throws IOException {
