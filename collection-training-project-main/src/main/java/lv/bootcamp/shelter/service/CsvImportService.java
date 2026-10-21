@@ -9,6 +9,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.NotDirectoryException;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.OptionalInt;
+import java.util.stream.Stream;
 
 @Slf4j
 public class CsvImportService {
@@ -28,6 +30,37 @@ public class CsvImportService {
                     .withResolverStyle(ResolverStyle.STRICT);
 
     public ImportResult importAnimals(Path inputPath) throws IOException {
+        return importFile(inputPath);
+    }
+
+    public ImportResult importAnimalsFromDirectory(Path inputDirectory) throws IOException {
+        if (!Files.isDirectory(inputDirectory)) {
+            throw new NotDirectoryException(inputDirectory.toString());
+        }
+
+        List<Path> csvFiles;
+        try (Stream<Path> paths = Files.walk(inputDirectory)) {
+            csvFiles = paths
+                    .filter(Files::isRegularFile)
+                    .filter(CsvImportService::isCsvFile)
+                    .sorted()
+                    .toList();
+        }
+
+        List<Animal> allAnimals = new ArrayList<>();
+        List<InvalidRow> invalidRows = new ArrayList<>();
+        for (Path csvFile : csvFiles) {
+            ImportResult fileResult = importFile(csvFile);
+            allAnimals.addAll(fileResult.allAnimals());
+            invalidRows.addAll(fileResult.invalidRows());
+        }
+
+        log.info("Finished import from {}: {} CSV files, {} animals imported, {} rows skipped",
+                inputDirectory, csvFiles.size(), allAnimals.size(), invalidRows.size());
+        return new ImportResult(allAnimals, invalidRows);
+    }
+
+    private ImportResult importFile(Path inputPath) throws IOException {
         log.info("Starting import from {}", inputPath);
 
         List<Animal> allAnimals = new ArrayList<>();
@@ -55,6 +88,10 @@ public class CsvImportService {
         log.info("Finished import from {}: {} animals imported, {} rows skipped",
                 inputPath, allAnimals.size(), invalidRows.size());
         return new ImportResult(allAnimals, invalidRows);
+    }
+
+    private static boolean isCsvFile(Path path) {
+        return path.getFileName().toString().toLowerCase(Locale.ROOT).endsWith(".csv");
     }
 
     private Animal parseAnimal(String row) {

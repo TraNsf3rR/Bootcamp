@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.NotDirectoryException;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.List;
@@ -89,6 +90,47 @@ class CsvImportServiceTest {
         Path missingPath = tempDirectory.resolve("missing.csv");
 
         assertThrows(IOException.class, () -> importService.importAnimals(missingPath));
+    }
+
+    @Test
+    void importsCsvFilesRecursivelyInPathOrderAndSkipsOtherFiles() throws IOException {
+        Path inputDirectory = tempDirectory.resolve("input");
+        Path nestedDirectory = inputDirectory.resolve("nested");
+        Files.createDirectories(nestedDirectory);
+
+        Path firstCsv = inputDirectory.resolve("01-intake.csv");
+        Files.writeString(firstCsv, String.join(System.lineSeparator(),
+                "name,species,age,vaccinated,intakeDate",
+                "Buddy,Dog,3,true,15.01.2026",
+                ",Cat,2,true,16.01.2026") + System.lineSeparator(), StandardCharsets.UTF_8);
+
+        Path secondCsv = nestedDirectory.resolve("02-intake.CSV");
+        Files.writeString(secondCsv, String.join(System.lineSeparator(),
+                "name,species,age,vaccinated,intakeDate",
+                "Luna,Cat,,false,17.01.2026",
+                "Max,Dog,not-a-number,true,18.01.2026") + System.lineSeparator(), StandardCharsets.UTF_8);
+
+        Files.writeString(inputDirectory.resolve("notes.txt"), "not a CSV file", StandardCharsets.UTF_8);
+
+        ImportResult result = importService.importAnimalsFromDirectory(inputDirectory);
+
+        assertEquals(List.of("Buddy", "Luna"),
+                result.allAnimals().stream().map(Animal::getName).toList());
+        assertEquals(2, result.skippedRows());
+        assertEquals(List.of(firstCsv, secondCsv),
+                result.invalidRows().stream().map(InvalidRow::sourceFile).toList());
+        assertEquals(List.of(3, 3),
+                result.invalidRows().stream().map(InvalidRow::lineNumber).toList());
+    }
+
+    @Test
+    void rejectsFilePathWhenDirectoryIsRequired() throws IOException {
+        Path inputFile = writeCsv(
+                "name,species,age,vaccinated,intakeDate",
+                "Buddy,Dog,3,true,15.01.2026");
+
+        assertThrows(NotDirectoryException.class,
+                () -> importService.importAnimalsFromDirectory(inputFile));
     }
 
     private Path writeCsv(String... rows) throws IOException {

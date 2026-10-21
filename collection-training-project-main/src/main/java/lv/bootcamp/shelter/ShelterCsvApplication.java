@@ -12,14 +12,14 @@ import java.nio.file.Path;
 public class ShelterCsvApplication {
 
     public static void main(String[] args) throws IOException {
-        Path inputPath = Path.of("src", "main", "resources", "data", "intake.csv");
+        Path inputDirectory = Path.of("src", "main", "resources", "data");
         Path outputPath = Path.of("output", "upload-report.txt");
 
         CsvImportService importService = new CsvImportService();
         ShelterAnalyticsService analyticsService = new ShelterAnalyticsService();
         ReportExportService reportExportService = new ReportExportService();
 
-        ImportResult importResult = importService.importAnimals(inputPath);
+        ImportResult importResult = importService.importAnimalsFromDirectory(inputDirectory);
         ShelterReportData reportData = analyticsService.buildReportData(importResult);
         reportExportService.writeReport(outputPath, reportData);
     }
