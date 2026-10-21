@@ -1,0 +1,38 @@
+2026-10-21 20:38:05 WARN  c.b.s.controller.HomeController - Device 'LIGHT_03' is offline; command skipped.
+2026-10-21 20:38:05 ERROR c.b.smarthome.device.SmartLock - Failed unlock attempt for lock 'Back Door Lock' (LOCK_02)
+2026-10-21 20:38:05 ERROR c.b.s.controller.HomeController - Command 'LOCK_02 UNLOCK' failed for device 'LOCK_02'
+com.bootcamp.smarthome.exception.InvalidCommandException: Incorrect PIN for lock 'LOCK_02'.
+	at com.bootcamp.smarthome.device.SmartLock.validatePin(SmartLock.java:37)
+	at com.bootcamp.smarthome.device.SmartLock.executeCommand(SmartLock.java:54)
+	at com.bootcamp.smarthome.controller.HomeController.sendCommand(HomeController.java:96)
+	at com.bootcamp.smarthome.Main.sendCommandSafely(Main.java:82)
+	at com.bootcamp.smarthome.Main.main(Main.java:71)
+2026-10-21 20:43:33 WARN  c.b.s.controller.HomeController - Device 'LIGHT_03' is offline; command skipped.
+2026-10-21 20:43:33 ERROR c.b.smarthome.device.SmartLock - Failed unlock attempt for lock 'Back Door Lock' (LOCK_02)
+2026-10-21 20:43:33 ERROR c.b.s.controller.HomeController - Command 'LOCK_02 UNLOCK' failed for device 'LOCK_02'
+com.bootcamp.smarthome.exception.InvalidCommandException: Incorrect PIN for lock 'LOCK_02'.
+	at com.bootcamp.smarthome.device.SmartLock.validatePin(SmartLock.java:37)
+	at com.bootcamp.smarthome.device.SmartLock.executeCommand(SmartLock.java:54)
+	at com.bootcamp.smarthome.controller.HomeController.sendCommand(HomeController.java:96)
+	at com.bootcamp.smarthome.Main.sendCommandSafely(Main.java:82)
+	at com.bootcamp.smarthome.Main.main(Main.java:71)
+2026-10-21 20:47:12 WARN  c.b.s.controller.HomeController - Device 'LIGHT_03' is offline; command skipped.
+2026-10-21 20:47:12 ERROR c.b.smarthome.device.SmartLock - Failed unlock attempt for lock 'Back Door Lock' (LOCK_02)
+2026-10-21 20:47:12 ERROR c.b.s.controller.HomeController - Command 'LOCK_02 UNLOCK' failed for device 'LOCK_02'
+com.bootcamp.smarthome.exception.InvalidCommandException: Incorrect PIN for lock 'LOCK_02'.
+	at com.bootcamp.smarthome.device.SmartLock.validatePin(SmartLock.java:37)
+	at com.bootcamp.smarthome.device.SmartLock.executeCommand(SmartLock.java:54)
+	at com.bootcamp.smarthome.controller.HomeController.sendCommand(HomeController.java:96)
+	at com.bootcamp.smarthome.Main.sendCommandSafely(Main.java:82)
+	at com.bootcamp.smarthome.Main.main(Main.java:71)
+2026-10-21 20:47:12 WARN  c.b.s.controller.HomeController - Device 'SENSOR_99' not found; command skipped.
+2026-10-21 20:55:31 WARN  c.b.s.controller.HomeController - Device 'LIGHT_03' is offline; command skipped.
+2026-10-21 20:55:31 ERROR c.b.smarthome.device.SmartLock - Failed unlock attempt for lock 'Back Door Lock' (LOCK_02)
+2026-10-21 20:55:31 ERROR c.b.s.controller.HomeController - Command 'LOCK_02 UNLOCK' failed for device 'LOCK_02'
+com.bootcamp.smarthome.exception.InvalidCommandException: Incorrect PIN for lock 'LOCK_02'.
+	at com.bootcamp.smarthome.device.SmartLock.validatePin(SmartLock.java:37)
+	at com.bootcamp.smarthome.device.SmartLock.executeCommand(SmartLock.java:54)
+	at com.bootcamp.smarthome.controller.HomeController.sendCommand(HomeController.java:94)
+	at com.bootcamp.smarthome.Main.sendCommandSafely(Main.java:81)
+	at com.bootcamp.smarthome.Main.main(Main.java:70)
+2026-10-21 20:55:31 WARN  c.b.s.controller.HomeController - Device 'SENSOR_99' not found; command skipped.
