@@ -10,5 +10,6 @@ public record ShelterReportData(
         ImportResult importResult,
         Set<String> uniqueSpecies,
         Map<String, List<Animal>> animalsBySpecies,
-        List<String> animalsNeedingVetInput) {
+        List<String> animalsNeedingVetInput,
+        Map<String, SpeciesSummary> speciesSummaries) {
 }
