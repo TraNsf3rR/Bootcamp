@@ -4,3 +4,4 @@ target/
 output/upload-report.txt
 output/processed-files.txt
 output/upload-report-*.txt
+output/upload-summary.json
