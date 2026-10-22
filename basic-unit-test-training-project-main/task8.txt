@@ -1,0 +1,23 @@
+Coverage review (Task 8)
+
+All 72 tests passed. IntelliJ reports overall coverage for lv.bootcamp.shelter:
+- Classes: 88% (8/9)
+- Methods: 76% (29/38)
+- Lines: 80% (135/167)
+- Branches: 62% (54/86)
+
+The AnimalType class has 0% coverage, including 0 of 10 branches. There is no
+AnimalType test class.
+
+1. AnimalType.isSenior(int), source line 30
+   Neither outcome of the comparison
+   age > averageLifespanYears / 2 is covered. For DOG, the threshold is 7, so
+   tests at ages 7 and 8 would cover the false and true branches. These tests
+   could catch an off-by-one error that incorrectly classifies a dog at the
+   senior-age boundary.
+
+2. AnimalType.fromDisplayName(String), source lines 38-42
+   The null/blank guard and display-name lookup branches are uncovered. Tests
+   for null and blank input, a case-insensitive valid name such as " dog ",
+   and an unknown name would exercise those paths. These tests could catch a
+   null-handling regression or an incorrect/missing type mapping.
