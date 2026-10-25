@@ -1,5 +1,13 @@
 # Shelter Starter
 
+## UI Sign-in
+
+The server-rendered pages and animal creation form require authentication. The REST API and Swagger/OpenAPI endpoints remain public.
+
+1. Start the application and find `Shelter UI sign-in username` and `Using generated security password` in the startup logs.
+2. Unless configured otherwise, the username is `user`; the generated password changes each time the application starts.
+3. Open `http://localhost:8080/login` and sign in with those values. Use the configured port if it differs from `8080`.
+
 ## Purpose
 
 This project is a simple sample application for learning basic UI development with Java and Spring Boot. It is intended for coursework, experimentation, and local practice.
@@ -35,11 +43,6 @@ This repository contains a sample homework project created for an educational co
 
 Add inline validation messages below the form inputs
 
-## UI Sign-in
-
-The server-rendered pages and animal creation form require authentication. The REST API and Swagger/OpenAPI endpoints remain public.
-
-At startup, the application logs the sign-in username (default `user`), and Spring Security prints the generated password. Use both to sign in at `/login`. The generated password changes on each start unless credentials are configured separately.
 
 ## Animal Images
 
