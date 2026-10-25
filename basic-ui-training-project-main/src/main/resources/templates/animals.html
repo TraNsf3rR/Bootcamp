@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shelter Animals</title>
+  <style>
+    body { font-family: sans-serif; max-width: 760px; margin: 2rem auto; padding: 0 1rem; }
+    nav { background: #f1f5f9; padding: 0.6rem 1rem; border-radius: 6px; margin-bottom: 1.5rem; }
+    nav a { margin-right: 1rem; text-decoration: none; color: #2563eb; }
+    nav a:hover { text-decoration: underline; }
+    h1 { border-bottom: 2px solid #333; padding-bottom: 0.4rem; }
+    ul { list-style: none; padding: 0; }
+    li { border: 1px solid #ddd; border-radius: 6px; padding: 1rem; margin-bottom: 1rem;
+         display: flex; gap: 1rem; align-items: flex-start; }
+    li img { width: 300px; height: 200px; object-fit: cover; border-radius: 4px; flex-shrink: 0; }
+    .info { flex: 1; min-width: 0; }
+    @media (max-width: 600px) {
+      li { flex-direction: column; }
+      li img { max-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <nav aria-label="Main navigation">
+    <a th:href="@{/}">Home</a>
+    <a th:href="@{/animals}">All animals</a>
+    <a th:href="@{/animals/new}">Add animal</a>
+  </nav>
+
+  <main>
+    <h1>Shelter Animals</h1>
+    <section aria-label="Animal list">
+      <ul>
+        <li th:each="animal : ${animals}">
+          <img th:src="${animal.imageUrl}" th:alt="|Photo of ${animal.name}|"
+               width="300" height="200" style="object-fit: cover;">
+          <div class="info">
+            <h2 th:text="${animal.name}">Animal name</h2>
+            <p><strong>Type:</strong> <span th:text="${animal.type}">CAT</span></p>
+            <p><strong>Breed:</strong> <span th:text="${animal.breed}">Breed</span></p>
+            <p><strong>Age:</strong> <span th:text="${animal.age}">0</span></p>
+            <p><strong>Description:</strong> <span th:text="${animal.description}">Description</span></p>
+            <p><strong>Status:</strong> <span th:text="${animal.status}">AVAILABLE</span></p>
+          </div>
+        </li>
+      </ul>
+    </section>
+  </main>
+</body>
+</html>
