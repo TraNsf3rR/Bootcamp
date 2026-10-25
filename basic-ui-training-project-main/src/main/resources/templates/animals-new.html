@@ -13,6 +13,8 @@
     form { display: grid; gap: 0.5rem; max-width: 480px; margin-top: 1rem; }
     label { font-weight: bold; }
     input, select, textarea { padding: 0.4rem; border: 1px solid #ccc; border-radius: 4px; width: 100%; box-sizing: border-box; }
+    .field-error { color: #b91c1c; margin: 0; }
+    input[aria-invalid="true"], select[aria-invalid="true"] { border-color: #b91c1c; }
     button { padding: 0.6rem 1.2rem; background: #2563eb; color: white; border: none; border-radius: 4px; cursor: pointer; width: fit-content; }
     button:hover { background: #1d4ed8; }
     .back-link { display: inline-block; margin-top: 1rem; color: #2563eb; }
@@ -27,23 +29,32 @@
 
   <main>
     <h1>Add a new animal</h1>
-    <form th:action="@{/animals}" th:object="${form}" method="post">
+    <form th:action="@{/animals}" th:object="${form}" method="post" novalidate>
       <label for="name">Name</label>
-      <input th:field="*{name}" type="text" required placeholder="e.g. Milo">
+      <input th:field="*{name}" type="text" required placeholder="e.g. Milo"
+             th:attr="aria-invalid=${#fields.hasErrors('name')}, aria-describedby=${#fields.hasErrors('name')} ? 'name-error' : null">
+      <span id="name-error" class="field-error" role="alert"
+            th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name is required</span>
 
       <label for="type">Type</label>
-      <select th:field="*{type}" required>
+      <select th:field="*{type}" required
+              th:attr="aria-invalid=${#fields.hasErrors('type')}, aria-describedby=${#fields.hasErrors('type')} ? 'type-error' : null">
         <option value="">— choose —</option>
         <option value="CAT">Cat</option>
         <option value="DOG">Dog</option>
         <option value="OTHER">Other</option>
       </select>
+      <span id="type-error" class="field-error" role="alert"
+            th:if="${#fields.hasErrors('type')}" th:errors="*{type}">Type is required</span>
 
       <label for="breed">Breed</label>
       <input th:field="*{breed}" type="text" placeholder="e.g. Siamese">
 
       <label for="age">Age (years)</label>
-      <input th:field="*{age}" type="number" min="0" placeholder="e.g. 3">
+      <input th:field="*{age}" type="number" min="0" placeholder="e.g. 3"
+             th:attr="aria-invalid=${#fields.hasErrors('age')}, aria-describedby=${#fields.hasErrors('age')} ? 'age-error' : null">
+      <span id="age-error" class="field-error" role="alert"
+            th:if="${#fields.hasErrors('age')}" th:errors="*{age}">Age cannot be negative</span>
 
       <label for="description">Description</label>
       <textarea th:field="*{description}" rows="3"

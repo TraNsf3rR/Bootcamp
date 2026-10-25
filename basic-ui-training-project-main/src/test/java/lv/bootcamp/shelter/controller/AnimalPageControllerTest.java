@@ -72,4 +72,33 @@ class AnimalPageControllerTest {
                 .andExpect(content().string(containsString("Milo Stage One")))
                 .andExpect(content().string(containsString("/images/animals/milo.jpg")));
     }
+
+    @Test
+    void blankNameShowsAccessibleInlineValidationError() throws Exception {
+        mockMvc.perform(post("/animals")
+                        .param("name", " ")
+                        .param("type", "CAT")
+                        .param("age", "2"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("animals-new"))
+                .andExpect(content().string(containsString("Name is required")))
+                .andExpect(content().string(containsString("id=\"name-error\"")))
+                .andExpect(content().string(containsString("aria-invalid=\"true\"")))
+                .andExpect(content().string(containsString("aria-describedby=\"name-error\"")))
+                .andExpect(content().string(containsString("role=\"alert\"")));
+    }
+
+    @Test
+    void typeAndAgeValidationErrorsAreShownInline() throws Exception {
+        mockMvc.perform(post("/animals")
+                        .param("name", "Milo Validation")
+                        .param("type", "")
+                        .param("age", "-1"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("animals-new"))
+                .andExpect(content().string(containsString("Type is required")))
+                .andExpect(content().string(containsString("Age cannot be negative")))
+                .andExpect(content().string(containsString("aria-describedby=\"type-error\"")))
+                .andExpect(content().string(containsString("aria-describedby=\"age-error\"")));
+    }
 }
