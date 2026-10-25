@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shelter Animals</title>
+  <link rel="stylesheet" th:href="@{/css/site.css}">
+</head>
+<body>
+  <nav aria-label="Main navigation">
+    <a th:href="@{/}">Home</a>
+    <a th:href="@{/animals}">All animals</a>
+    <a th:href="@{/animals/new}">Add animal</a>
+  </nav>
+
+  <main>
+    <h1>Shelter Animals</h1>
+    <a th:href="@{/swagger-ui/index.html}" class="cta">Swagger UI</a>
+    <section aria-label="Animal list">
+      <ul>
+        <li th:each="animal : ${animals}">
+          <img th:src="${animal.imageUrl}" th:alt="|Photo of ${animal.name}|"
+               width="300" height="200">
+          <div class="info">
+            <h2 th:text="${animal.name}">Animal name</h2>
+            <p><strong>Type:</strong> <span th:text="${animal.type}">CAT</span></p>
+            <p><strong>Breed:</strong> <span th:text="${animal.breed}">Breed</span></p>
+            <p><strong>Age:</strong> <span th:text="${animal.age}">0</span></p>
+            <p><strong>Description:</strong> <span th:text="${animal.description}">Description</span></p>
+            <p><strong>Status:</strong> <span th:text="${animal.status}">AVAILABLE</span></p>
+          </div>
+        </li>
+      </ul>
+    </section>
+  </main>
+</body>
+</html>

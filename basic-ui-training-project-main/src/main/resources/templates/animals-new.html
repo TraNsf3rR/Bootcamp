@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shelter — Add Animal</title>
+  <link rel="stylesheet" th:href="@{/css/site.css}">
+</head>
+<body>
+  <nav aria-label="Main navigation">
+    <a th:href="@{/}">Home</a>
+    <a th:href="@{/animals}">All animals</a>
+    <a th:href="@{/animals/new}">Add animal</a>
+  </nav>
+
+  <main>
+    <h1>Add a new animal</h1>
+    <form th:action="@{/animals}" th:object="${form}" method="post" novalidate>
+      <label for="name">Name</label>
+      <input th:field="*{name}" type="text" required placeholder="e.g. Milo"
+             th:attr="aria-invalid=${#fields.hasErrors('name')}, aria-describedby=${#fields.hasErrors('name')} ? 'name-error' : null">
+      <span id="name-error" class="field-error" role="alert"
+            th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name is required</span>
+
+      <label for="type">Type</label>
+      <select th:field="*{type}" required
+              th:attr="aria-invalid=${#fields.hasErrors('type')}, aria-describedby=${#fields.hasErrors('type')} ? 'type-error' : null">
+        <option value="">— choose —</option>
+        <option value="CAT">Cat</option>
+        <option value="DOG">Dog</option>
+        <option value="OTHER">Other</option>
+      </select>
+      <span id="type-error" class="field-error" role="alert"
+            th:if="${#fields.hasErrors('type')}" th:errors="*{type}">Type is required</span>
+
+      <label for="breed">Breed</label>
+      <input th:field="*{breed}" type="text" placeholder="e.g. Siamese">
+
+      <label for="age">Age (years)</label>
+      <input th:field="*{age}" type="number" min="0" placeholder="e.g. 3"
+             th:attr="aria-invalid=${#fields.hasErrors('age')}, aria-describedby=${#fields.hasErrors('age')} ? 'age-error' : null">
+      <span id="age-error" class="field-error" role="alert"
+            th:if="${#fields.hasErrors('age')}" th:errors="*{age}">Age cannot be negative</span>
+
+      <label for="description">Description</label>
+      <textarea th:field="*{description}" rows="3"
+                placeholder="A short description of the animal's personality"></textarea>
+
+      <label for="imageUrl">Image filename or URL</label>
+      <input th:field="*{imageUrl}" type="text" placeholder="luna.jpg">
+
+      <button type="submit">Add animal</button>
+    </form>
+
+    <a th:href="@{/animals}" class="back-link">Back to list</a>
+  </main>
+</body>
+</html>
