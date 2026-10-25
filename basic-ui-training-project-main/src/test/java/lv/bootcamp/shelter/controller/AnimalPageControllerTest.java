@@ -26,6 +26,7 @@ class AnimalPageControllerTest {
         mockMvc.perform(get("/"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("index"))
+                .andExpect(content().string(containsString("href=\"/css/site.css\"")))
                 .andExpect(content().string(containsString("href=\"/animals\"")))
                 .andExpect(content().string(containsString("href=\"/animals/new\"")));
     }
@@ -37,10 +38,12 @@ class AnimalPageControllerTest {
                 .andExpect(view().name("animals"))
                 .andExpect(content().string(containsString("Luna")))
                 .andExpect(content().string(containsString("Diora")))
-                .andExpect(content().string(containsString("max-width: 760px")))
+                .andExpect(content().string(containsString("href=\"/css/site.css\"")))
                 .andExpect(content().string(containsString("src=\"/images/animals/Luna.jpeg\"")))
                 .andExpect(content().string(containsString("width=\"300\"")))
                 .andExpect(content().string(containsString("height=\"200\"")))
+                .andExpect(content().string(containsString("href=\"/swagger-ui/index.html\"")))
+                .andExpect(content().string(containsString("class=\"cta\">Swagger UI</a>")))
                 .andExpect(content().string(containsString("href=\"/animals/new\"")));
     }
 
@@ -49,10 +52,21 @@ class AnimalPageControllerTest {
         mockMvc.perform(get("/animals/new"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("animals-new"))
+                .andExpect(content().string(containsString("href=\"/css/site.css\"")))
                 .andExpect(content().string(containsString("action=\"/animals\"")))
                 .andExpect(content().string(containsString("name=\"name\"")))
                 .andExpect(content().string(containsString("name=\"type\"")))
                 .andExpect(content().string(containsString("href=\"/animals\"")));
+    }
+
+    @Test
+    void sharedStylesheetIsServed() throws Exception {
+        mockMvc.perform(get("/css/site.css"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith("text/css"))
+                .andExpect(content().string(containsString("max-width: 760px")))
+                .andExpect(content().string(containsString(".cta")))
+                .andExpect(content().string(containsString("li img")));
     }
 
     @Test
