@@ -2,6 +2,7 @@ package lv.bootcamp.shelter.controller;
 
 import jakarta.validation.Valid;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -67,7 +68,10 @@ public class AnimalApiController {
             ),
             @ApiResponse(responseCode = "404", description = "No animal exists with the requested ID.")
     })
-    public ResponseEntity<AnimalResponse> findById(@PathVariable Long id) {
+    public ResponseEntity<AnimalResponse> findById(
+            @Parameter(description = "Unique numeric identifier of the animal.", example = "1")
+            @PathVariable Long id
+    ) {
         return animalService.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -141,7 +145,10 @@ public class AnimalApiController {
                     content = @Content(mediaType = "text/plain", schema = @Schema(type = "string"))
             )
     })
-    public ResponseEntity<AnimalResponse> adopt(@PathVariable Long id) {
+    public ResponseEntity<AnimalResponse> adopt(
+            @Parameter(description = "Unique numeric identifier of the animal to adopt.", example = "1")
+            @PathVariable Long id
+    ) {
         return animalService.adopt(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
