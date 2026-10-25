@@ -4,29 +4,17 @@ PRAGMA foreign_keys = ON;
 DELETE FROM students;
 DELETE FROM courses;
 
--- TODO 1:
--- Insert 3 courses.
--- Remember:
--- course_id is a number.
--- course_name must be present.
--- credits must be greater than 0.
--- Hint: INSERT INTO table (columns) VALUES (row 1), (row 2), ...
+INSERT INTO courses (course_id, course_name, credits) VALUES
+(1, 'Physics', 6),
+(2, 'Biology', 4),
+(3, 'Doing fun stuff', 22);
 
+INSERT INTO students (name, email, age, course_id) VALUES
+('Jānis', 'janis.berzins@inbox.lv', 22, 3),
+('Baiba', 'baiba.klavina@inbox.lv', 43, 2),
+('Ilzīte', 'ilze.joka@inbox.lv', 32, 3),
+('Inguss', 'pienins83@inbox.lv', 27, 1),
+('Mihails', 'biezpiens11@inbox.lv', 63, 2);
 
-
--- TODO 2:
--- Insert 5 students.
--- Remember:
--- id is a number.
--- name must be present.
--- email must be unique.
--- age must be 18 or older.
--- course_id must exist in the courses table.
-
-
-
--- TODO 3:
--- Uncomment this to test a foreign key error.
--- This should fail because course_id 999 does not exist.
 -- INSERT INTO students (id, name, email, age, course_id)
 -- VALUES (6, 'Invalid Course Student', 'invalid@example.com', 20, 999);
