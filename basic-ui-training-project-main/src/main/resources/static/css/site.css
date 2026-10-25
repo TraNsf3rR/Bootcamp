@@ -17,6 +17,7 @@ form { display: grid; gap: 0.5rem; max-width: 480px; margin-top: 1rem; }
 label { font-weight: bold; }
 input, select, textarea { padding: 0.4rem; border: 1px solid #ccc; border-radius: 4px; width: 100%; box-sizing: border-box; }
 .field-error { color: #b91c1c; margin: 0; }
+.notice { color: #166534; }
 input[aria-invalid="true"], select[aria-invalid="true"] { border-color: #b91c1c; }
 button { padding: 0.6rem 1.2rem; background: #2563eb; color: white; border: none; border-radius: 4px; cursor: pointer; width: fit-content; }
 button:hover { background: #1d4ed8; }

@@ -35,6 +35,12 @@ This repository contains a sample homework project created for an educational co
 
 Add inline validation messages below the form inputs
 
+## UI Sign-in
+
+The server-rendered pages and animal creation form require authentication. The REST API and Swagger/OpenAPI endpoints remain public.
+
+At startup, the application logs the sign-in username (default `user`), and Spring Security prints the generated password. Use both to sign in at `/login`. The generated password changes on each start unless credentials are configured separately.
+
 ## Animal Images
 
 The project supports local image files from static resources.

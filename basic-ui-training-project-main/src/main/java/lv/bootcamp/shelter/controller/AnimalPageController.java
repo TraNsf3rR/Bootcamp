@@ -22,6 +22,11 @@ public class AnimalPageController {
         return "index";
     }
 
+    @GetMapping("/login")
+    public String login() {
+        return "login";
+    }
+
     @GetMapping("/animals")
     public String listAnimals(Model model) {
         model.addAttribute("animals", animalService.findAll());
