@@ -87,7 +87,8 @@ class BookControllerTest {
                                 {"title":"The Hobbit","author":"J.R.R. Tolkien","genre":"Fantasy","publicationYear":1937,"available":false}
                                 """))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.available").value(false));
+                .andExpect(jsonPath("$.available").value(false))
+                .andExpect(jsonPath("$.borrowedStatus").value(true));
 
         ArgumentCaptor<UpdateBookRequest> requestCaptor = ArgumentCaptor.forClass(UpdateBookRequest.class);
         verify(bookService).updateBook(eq(1L), requestCaptor.capture());
@@ -200,6 +201,6 @@ class BookControllerTest {
     }
 
     private static BookResponse sampleBook(boolean available) {
-        return new BookResponse(1L, "The Hobbit", "J.R.R. Tolkien", "Fantasy", 1937, available);
+        return new BookResponse(1L, "The Hobbit", "J.R.R. Tolkien", "Fantasy", 1937, available, !available);
     }
 }

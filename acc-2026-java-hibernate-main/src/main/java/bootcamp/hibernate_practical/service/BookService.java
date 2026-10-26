@@ -46,7 +46,7 @@ public class BookService {
         book.setAuthor(request.getAuthor());
         book.setGenre(request.getGenre());
         book.setPublicationYear(request.getPublicationYear());
-        book.setAvailable(request.getAvailable());
+        book.setBorrowedStatus(!request.getAvailable());
 
         return mapToResponse(bookRepository.save(book));
     }
@@ -68,7 +68,7 @@ public class BookService {
     }
 
     public List<BookResponse> findAvailableBooks() {
-        return bookRepository.findByAvailableTrue().stream()
+        return bookRepository.findByBorrowedStatusFalse().stream()
                 .map(this::mapToResponse)
                 .toList();
     }
@@ -84,13 +84,15 @@ public class BookService {
     }
 
     private BookResponse mapToResponse(Book book) {
+        boolean borrowedStatus = book.isBorrowedStatus();
         return new BookResponse(
                 book.getId(),
                 book.getTitle(),
                 book.getAuthor(),
                 book.getGenre(),
                 book.getPublicationYear(),
-                book.isAvailable()
+                !borrowedStatus,
+                borrowedStatus
         );
     }
 

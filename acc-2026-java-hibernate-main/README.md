@@ -31,5 +31,7 @@ Complete all of the 'TODO' portions of the code. The finished application should
 
 Create and update requests require nonblank titles and authors, as well as a publication year. Update requests must also include `available`; `false` is a valid value. The genre is optional. Invalid request bodies return `400 Bad Request`.
 
+The entity stores `borrowedStatus`; `available` in responses is its inverse. New books start available and not borrowed.
+
 ## Stretch goals
-- Add 'borrow' and 'return' endpoints along with the new 'borrowedStatus' field to the Book entity
+- Add 'borrow' and 'return' endpoints with explicit state-transition handling.

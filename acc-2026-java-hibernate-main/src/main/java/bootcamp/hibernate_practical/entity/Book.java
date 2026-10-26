@@ -21,13 +21,13 @@ public class Book {
     private String author;
     private String genre;
     private int publicationYear;
-    private boolean available;
+    private boolean borrowedStatus;
 
     public Book(String title, String author, String genre, int publicationYear, boolean available) {
         this.title = title;
         this.author = author;
         this.genre = genre;
         this.publicationYear = publicationYear;
-        this.available = available;
+        this.borrowedStatus = !available;
     }
 }

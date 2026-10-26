@@ -42,6 +42,7 @@ class BookServiceTest {
         assertEquals("Classic", response.genre);
         assertEquals(1813, response.publicationYear);
         assertTrue(response.available);
+        assertFalse(response.borrowedStatus);
     }
 
     @Test
@@ -58,7 +59,8 @@ class BookServiceTest {
         assertEquals(book.getAuthor(), byId.author);
         assertEquals(book.getGenre(), byId.genre);
         assertEquals(book.getPublicationYear(), byId.publicationYear);
-        assertEquals(book.isAvailable(), byId.available);
+        assertEquals(book.isBorrowedStatus(), byId.borrowedStatus);
+        assertEquals(!book.isBorrowedStatus(), byId.available);
         assertEquals(Set.of(book.getId()), allBooks.stream()
                 .map(response -> response.id)
                 .collect(Collectors.toSet()));
@@ -78,6 +80,7 @@ class BookServiceTest {
         assertEquals("New Genre", updated.genre);
         assertEquals(2024, updated.publicationYear);
         assertFalse(updated.available);
+        assertTrue(updated.borrowedStatus);
 
         bookService.deleteBook(book.getId());
 
