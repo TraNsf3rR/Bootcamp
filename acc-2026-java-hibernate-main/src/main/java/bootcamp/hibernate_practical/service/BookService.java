@@ -46,7 +46,7 @@ public class BookService {
         book.setAuthor(request.getAuthor());
         book.setGenre(request.getGenre());
         book.setPublicationYear(request.getPublicationYear());
-        book.setAvailable(request.isAvailable());
+        book.setAvailable(request.getAvailable());
 
         return mapToResponse(bookRepository.save(book));
     }

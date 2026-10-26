@@ -144,7 +144,7 @@ class BookServiceTest {
         ReflectionTestUtils.setField(request, "author", author);
         ReflectionTestUtils.setField(request, "genre", genre);
         ReflectionTestUtils.setField(request, "publicationYear", publicationYear);
-        request.available = available;
+        ReflectionTestUtils.setField(request, "available", available);
         return request;
     }
 }

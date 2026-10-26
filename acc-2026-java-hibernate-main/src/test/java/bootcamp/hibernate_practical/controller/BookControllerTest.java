@@ -24,6 +24,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -58,7 +59,7 @@ class BookControllerTest {
         ArgumentCaptor<CreateBookRequest> requestCaptor = ArgumentCaptor.forClass(CreateBookRequest.class);
         verify(bookService).createBook(requestCaptor.capture());
         assertEquals("The Hobbit", requestCaptor.getValue().getTitle());
-        assertEquals(1937, requestCaptor.getValue().getPublicationYear());
+        assertEquals(Integer.valueOf(1937), requestCaptor.getValue().getPublicationYear());
     }
 
     @Test
@@ -90,7 +91,7 @@ class BookControllerTest {
 
         ArgumentCaptor<UpdateBookRequest> requestCaptor = ArgumentCaptor.forClass(UpdateBookRequest.class);
         verify(bookService).updateBook(eq(1L), requestCaptor.capture());
-        assertFalse(requestCaptor.getValue().isAvailable());
+        assertFalse(requestCaptor.getValue().getAvailable());
     }
 
     @Test
@@ -141,6 +142,48 @@ class BookControllerTest {
                 .andExpect(status().isNotFound());
         mockMvc.perform(delete("/api/books/999"))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void rejectsInvalidCreateRequests() throws Exception {
+        mockMvc.perform(post("/api/books")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"title":" ","author":"Author","publicationYear":2020}
+                                """))
+                .andExpect(status().isBadRequest());
+        mockMvc.perform(post("/api/books")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"title":"Title","author":"","publicationYear":2020}
+                                """))
+                .andExpect(status().isBadRequest());
+        mockMvc.perform(post("/api/books")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"title":"Title","author":"Author"}
+                                """))
+                .andExpect(status().isBadRequest());
+
+        verifyNoInteractions(bookService);
+    }
+
+    @Test
+    void rejectsUpdateRequestsWithMissingRequiredValues() throws Exception {
+        mockMvc.perform(put("/api/books/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"title":"Title","author":"Author","publicationYear":2024}
+                                """))
+                .andExpect(status().isBadRequest());
+        mockMvc.perform(put("/api/books/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"title":"Title","author":"Author","available":false}
+                                """))
+                .andExpect(status().isBadRequest());
+
+        verifyNoInteractions(bookService);
     }
 
     private static BookResponse sampleBook(boolean available) {

@@ -28,8 +28,8 @@ Complete all of the 'TODO' portions of the code. The finished application should
 | `GET` | `/api/books/published-after/{year}` | Returns books published strictly after the given year. |
 | `GET` | `/api/books/count` | Returns the total number of books. |
 
+Create and update requests require nonblank titles and authors, as well as a publication year. Update requests must also include `available`; `false` is a valid value. The genre is optional. Invalid request bodies return `400 Bad Request`.
+
 ## Stretch goals
-- Request validation
-- Custom exception handling
 - Searching by partial title
 - Add 'borrow' and 'return' endpoints along with the new 'borrowedStatus' field to the Book entity
