@@ -24,6 +24,7 @@ Complete all of the 'TODO' portions of the code. The finished application should
 | `PUT` | `/api/books/{id}` | Updates a book, or returns `404 Not Found` if the ID does not exist. |
 | `DELETE` | `/api/books/{id}` | Deletes a book and returns `204 No Content`, or `404 Not Found` if the ID does not exist. |
 | `GET` | `/api/books/author/{author}` | Returns books with an exact author match. |
+| `GET` | `/api/books/search?title={query}` | Returns books whose titles contain the query, ignoring case. |
 | `GET` | `/api/books/available` | Returns available books. |
 | `GET` | `/api/books/published-after/{year}` | Returns books published strictly after the given year. |
 | `GET` | `/api/books/count` | Returns the total number of books. |
@@ -31,5 +32,4 @@ Complete all of the 'TODO' portions of the code. The finished application should
 Create and update requests require nonblank titles and authors, as well as a publication year. Update requests must also include `available`; `false` is a valid value. The genre is optional. Invalid request bodies return `400 Bad Request`.
 
 ## Stretch goals
-- Searching by partial title
 - Add 'borrow' and 'return' endpoints along with the new 'borrowedStatus' field to the Book entity

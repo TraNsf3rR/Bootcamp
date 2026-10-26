@@ -31,6 +31,24 @@ class BookRepositoryTest {
     }
 
     @Test
+    void findsBooksByCaseInsensitivePartialTitle() {
+        Book matchingBook = bookRepository.save(
+                new Book("The Hobbit", "J.R.R. Tolkien", "Fantasy", 1937, true)
+        );
+        Book anotherMatchingBook = bookRepository.save(
+                new Book("HOBBIT: There and Back Again", "J.R.R. Tolkien", "Fantasy", 1940, true)
+        );
+        bookRepository.save(new Book("Dune", "Frank Herbert", "Science Fiction", 1965, true));
+
+        var results = bookRepository.findByTitleContainingIgnoreCase("hobbit");
+
+        assertEquals(
+                Set.of(matchingBook.getId(), anotherMatchingBook.getId()),
+                results.stream().map(Book::getId).collect(Collectors.toSet())
+        );
+    }
+
+    @Test
     void findsBooksPublishedStrictlyAfterTheGivenYear() {
         bookRepository.save(new Book("Older Book", "Author One", "Fiction", 1999, true));
         bookRepository.save(new Book("Boundary Book", "Author Two", "Fiction", 2000, true));

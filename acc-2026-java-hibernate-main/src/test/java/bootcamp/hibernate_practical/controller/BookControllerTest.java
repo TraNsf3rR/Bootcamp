@@ -126,6 +126,19 @@ class BookControllerTest {
     }
 
     @Test
+    void searchesByPartialTitleAndRejectsBlankSearchTerms() throws Exception {
+        given(bookService.searchBooksByTitle("hobbit")).willReturn(List.of(sampleBook(true)));
+
+        mockMvc.perform(get("/api/books/search").param("title", "hobbit"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].title").value("The Hobbit"));
+        mockMvc.perform(get("/api/books/search").param("title", "  "))
+                .andExpect(status().isBadRequest());
+
+        verify(bookService).searchBooksByTitle("hobbit");
+    }
+
+    @Test
     void mapsMissingBooksToNotFoundForGetUpdateAndDelete() throws Exception {
         given(bookService.getBookById(999L)).willThrow(new BookNotFoundException(999L));
         given(bookService.updateBook(eq(999L), any(UpdateBookRequest.class)))

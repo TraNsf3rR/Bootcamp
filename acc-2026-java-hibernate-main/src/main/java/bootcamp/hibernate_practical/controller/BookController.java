@@ -5,6 +5,7 @@ import bootcamp.hibernate_practical.dto.CreateBookRequest;
 import bootcamp.hibernate_practical.dto.UpdateBookRequest;
 import bootcamp.hibernate_practical.service.BookService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -52,6 +53,11 @@ public class BookController {
     @GetMapping("/author/{author}")
     public List<BookResponse> getBooksByAuthor(@PathVariable String author) {
         return bookService.findByAuthor(author);
+    }
+
+    @GetMapping("/search")
+    public List<BookResponse> searchBooksByTitle(@RequestParam @NotBlank String title) {
+        return bookService.searchBooksByTitle(title);
     }
 
     @GetMapping("/available")

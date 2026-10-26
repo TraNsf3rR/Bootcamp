@@ -61,6 +61,12 @@ public class BookService {
                 .toList();
     }
 
+    public List<BookResponse> searchBooksByTitle(String title) {
+        return bookRepository.findByTitleContainingIgnoreCase(title.strip()).stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
     public List<BookResponse> findAvailableBooks() {
         return bookRepository.findByAvailableTrue().stream()
                 .map(this::mapToResponse)

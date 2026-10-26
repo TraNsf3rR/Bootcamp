@@ -118,6 +118,24 @@ class BookServiceTest {
     }
 
     @Test
+    void searchesBooksByTrimmedPartialTitleIgnoringCase() {
+        Book matchingBook = bookRepository.save(
+                new Book("The Hobbit", "J.R.R. Tolkien", "Fantasy", 1937, true)
+        );
+        Book anotherMatchingBook = bookRepository.save(
+                new Book("HOBBIT: There and Back Again", "J.R.R. Tolkien", "Fantasy", 1940, true)
+        );
+        bookRepository.save(new Book("Dune", "Frank Herbert", "Science Fiction", 1965, true));
+
+        var results = bookService.searchBooksByTitle("  hobbit  ");
+
+        assertEquals(
+                Set.of(matchingBook.getId(), anotherMatchingBook.getId()),
+                results.stream().map(response -> response.id).collect(Collectors.toSet())
+        );
+    }
+
+    @Test
     void throwsBookNotFoundExceptionForMissingIds() {
         assertThrows(BookNotFoundException.class, () -> bookService.getBookById(999L));
         assertThrows(BookNotFoundException.class, () -> bookService.deleteBook(999L));
