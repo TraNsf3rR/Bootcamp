@@ -44,6 +44,16 @@ public class BookController {
         return bookService.updateBook(id, updateBookRequest);
     }
 
+    @PostMapping("/{id}/borrow")
+    public BookResponse borrowBook(@PathVariable Long id) {
+        return bookService.borrowBook(id);
+    }
+
+    @PostMapping("/{id}/return")
+    public BookResponse returnBook(@PathVariable Long id) {
+        return bookService.returnBook(id);
+    }
+
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteBook(@PathVariable Long id) {

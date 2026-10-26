@@ -5,6 +5,7 @@ import bootcamp.hibernate_practical.dto.CreateBookRequest;
 import bootcamp.hibernate_practical.dto.UpdateBookRequest;
 import bootcamp.hibernate_practical.entity.Book;
 import bootcamp.hibernate_practical.exception.BookNotFoundException;
+import bootcamp.hibernate_practical.exception.BookStateConflictException;
 import bootcamp.hibernate_practical.repository.BookRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,6 +89,43 @@ class BookServiceTest {
     }
 
     @Test
+    void borrowsAndReturnsBooks() {
+        Book book = bookRepository.save(
+                new Book("The Hobbit", "J.R.R. Tolkien", "Fantasy", 1937, true)
+        );
+
+        BookResponse borrowed = bookService.borrowBook(book.getId());
+
+        assertTrue(borrowed.borrowedStatus);
+        assertFalse(borrowed.available);
+
+        BookResponse returned = bookService.returnBook(book.getId());
+
+        assertFalse(returned.borrowedStatus);
+        assertTrue(returned.available);
+        assertFalse(bookRepository.findById(book.getId()).orElseThrow().isBorrowedStatus());
+    }
+
+    @Test
+    void rejectsBorrowAndReturnWhenBookIsAlreadyInRequestedState() {
+        Book borrowedBook = bookRepository.save(
+                new Book("Borrowed Book", "Author One", "Fiction", 2020, false)
+        );
+        Book availableBook = bookRepository.save(
+                new Book("Available Book", "Author Two", "Fiction", 2021, true)
+        );
+
+        assertThrows(
+                BookStateConflictException.class,
+                () -> bookService.borrowBook(borrowedBook.getId())
+        );
+        assertThrows(
+                BookStateConflictException.class,
+                () -> bookService.returnBook(availableBook.getId())
+        );
+    }
+
+    @Test
     void searchesByAuthorAvailabilityAndPublicationYearAndCountsBooks() {
         Book matchingBook = bookRepository.save(
                 new Book("Available", "Jane Austen", "Classic", 1813, true)
@@ -146,6 +184,8 @@ class BookServiceTest {
                 BookNotFoundException.class,
                 () -> bookService.updateBook(999L, updateRequest("Title", "Author", "Genre", 2024, true))
         );
+        assertThrows(BookNotFoundException.class, () -> bookService.borrowBook(999L));
+        assertThrows(BookNotFoundException.class, () -> bookService.returnBook(999L));
     }
 
     private static CreateBookRequest createRequest(String title, String author, String genre, int publicationYear) {

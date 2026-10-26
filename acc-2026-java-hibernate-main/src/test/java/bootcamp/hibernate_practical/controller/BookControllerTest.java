@@ -4,7 +4,8 @@ import bootcamp.hibernate_practical.dto.BookResponse;
 import bootcamp.hibernate_practical.dto.CreateBookRequest;
 import bootcamp.hibernate_practical.dto.UpdateBookRequest;
 import bootcamp.hibernate_practical.exception.BookNotFoundException;
-import bootcamp.hibernate_practical.exception.BookNotFoundExceptionHandler;
+import bootcamp.hibernate_practical.exception.BookExceptionHandler;
+import bootcamp.hibernate_practical.exception.BookStateConflictException;
 import bootcamp.hibernate_practical.service.BookService;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -34,7 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(BookController.class)
-@Import(BookNotFoundExceptionHandler.class)
+@Import(BookExceptionHandler.class)
 class BookControllerTest {
     @Autowired
     private MockMvc mockMvc;
@@ -105,6 +106,21 @@ class BookControllerTest {
     }
 
     @Test
+    void borrowsAndReturnsBooks() throws Exception {
+        given(bookService.borrowBook(1L)).willReturn(sampleBook(false));
+        given(bookService.returnBook(1L)).willReturn(sampleBook(true));
+
+        mockMvc.perform(post("/api/books/1/borrow"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.borrowedStatus").value(true))
+                .andExpect(jsonPath("$.available").value(false));
+        mockMvc.perform(post("/api/books/1/return"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.borrowedStatus").value(false))
+                .andExpect(jsonPath("$.available").value(true));
+    }
+
+    @Test
     void routesAuthorAvailabilityYearAndCountQueries() throws Exception {
         BookResponse response = sampleBook(true);
         given(bookService.findByAuthor("JaneAusten")).willReturn(List.of(response));
@@ -144,6 +160,8 @@ class BookControllerTest {
         given(bookService.getBookById(999L)).willThrow(new BookNotFoundException(999L));
         given(bookService.updateBook(eq(999L), any(UpdateBookRequest.class)))
                 .willThrow(new BookNotFoundException(999L));
+        given(bookService.borrowBook(999L)).willThrow(new BookNotFoundException(999L));
+        given(bookService.returnBook(999L)).willThrow(new BookNotFoundException(999L));
         doThrow(new BookNotFoundException(999L)).when(bookService).deleteBook(999L);
 
         mockMvc.perform(get("/api/books/999"))
@@ -156,6 +174,23 @@ class BookControllerTest {
                 .andExpect(status().isNotFound());
         mockMvc.perform(delete("/api/books/999"))
                 .andExpect(status().isNotFound());
+        mockMvc.perform(post("/api/books/999/borrow"))
+                .andExpect(status().isNotFound());
+        mockMvc.perform(post("/api/books/999/return"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void mapsInvalidBorrowAndReturnTransitionsToConflict() throws Exception {
+        given(bookService.borrowBook(1L))
+                .willThrow(new BookStateConflictException("Book with ID 1 is already borrowed"));
+        given(bookService.returnBook(2L))
+                .willThrow(new BookStateConflictException("Book with ID 2 is not borrowed"));
+
+        mockMvc.perform(post("/api/books/1/borrow"))
+                .andExpect(status().isConflict());
+        mockMvc.perform(post("/api/books/2/return"))
+                .andExpect(status().isConflict());
     }
 
     @Test

@@ -5,6 +5,7 @@ import bootcamp.hibernate_practical.dto.CreateBookRequest;
 import bootcamp.hibernate_practical.dto.UpdateBookRequest;
 import bootcamp.hibernate_practical.entity.Book;
 import bootcamp.hibernate_practical.exception.BookNotFoundException;
+import bootcamp.hibernate_practical.exception.BookStateConflictException;
 import bootcamp.hibernate_practical.repository.BookRepository;
 import org.springframework.stereotype.Service;
 
@@ -48,6 +49,26 @@ public class BookService {
         book.setPublicationYear(request.getPublicationYear());
         book.setBorrowedStatus(!request.getAvailable());
 
+        return mapToResponse(bookRepository.save(book));
+    }
+
+    public BookResponse borrowBook(Long id) {
+        Book book = findBookById(id);
+        if (book.isBorrowedStatus()) {
+            throw new BookStateConflictException("Book with ID " + id + " is already borrowed");
+        }
+
+        book.setBorrowedStatus(true);
+        return mapToResponse(bookRepository.save(book));
+    }
+
+    public BookResponse returnBook(Long id) {
+        Book book = findBookById(id);
+        if (!book.isBorrowedStatus()) {
+            throw new BookStateConflictException("Book with ID " + id + " is not borrowed");
+        }
+
+        book.setBorrowedStatus(false);
         return mapToResponse(bookRepository.save(book));
     }
 

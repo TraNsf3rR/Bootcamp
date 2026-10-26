@@ -22,6 +22,8 @@ Complete all of the 'TODO' portions of the code. The finished application should
 | `GET` | `/api/books` | Returns all books. |
 | `GET` | `/api/books/{id}` | Returns a book, or `404 Not Found` if the ID does not exist. |
 | `PUT` | `/api/books/{id}` | Updates a book, or returns `404 Not Found` if the ID does not exist. |
+| `POST` | `/api/books/{id}/borrow` | Borrows an available book and returns the updated book; returns `404 Not Found` if missing or `409 Conflict` if already borrowed. |
+| `POST` | `/api/books/{id}/return` | Returns a borrowed book and returns the updated book; returns `404 Not Found` if missing or `409 Conflict` if already available. |
 | `DELETE` | `/api/books/{id}` | Deletes a book and returns `204 No Content`, or `404 Not Found` if the ID does not exist. |
 | `GET` | `/api/books/author/{author}` | Returns books with an exact author match. |
 | `GET` | `/api/books/search?title={query}` | Returns books whose titles contain the query, ignoring case. |
@@ -32,6 +34,3 @@ Complete all of the 'TODO' portions of the code. The finished application should
 Create and update requests require nonblank titles and authors, as well as a publication year. Update requests must also include `available`; `false` is a valid value. The genre is optional. Invalid request bodies return `400 Bad Request`.
 
 The entity stores `borrowedStatus`; `available` in responses is its inverse. New books start available and not borrowed.
-
-## Stretch goals
-- Add 'borrow' and 'return' endpoints with explicit state-transition handling.
