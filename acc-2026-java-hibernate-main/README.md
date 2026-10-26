@@ -14,6 +14,20 @@ Complete all of the 'TODO' portions of the code. The finished application should
 - Controller delegates to Service, which delegates to Repository
 - DTOs are used for requests and responses
 
+## API Endpoints
+
+| Method | Path | Behavior |
+| --- | --- | --- |
+| `POST` | `/api/books` | Creates a book and returns `201 Created`; the database generates its ID. |
+| `GET` | `/api/books` | Returns all books. |
+| `GET` | `/api/books/{id}` | Returns a book, or `404 Not Found` if the ID does not exist. |
+| `PUT` | `/api/books/{id}` | Updates a book, or returns `404 Not Found` if the ID does not exist. |
+| `DELETE` | `/api/books/{id}` | Deletes a book and returns `204 No Content`, or `404 Not Found` if the ID does not exist. |
+| `GET` | `/api/books/author/{author}` | Returns books with an exact author match. |
+| `GET` | `/api/books/available` | Returns available books. |
+| `GET` | `/api/books/published-after/{year}` | Returns books published strictly after the given year. |
+| `GET` | `/api/books/count` | Returns the total number of books. |
+
 ## Stretch goals
 - Request validation
 - Custom exception handling
